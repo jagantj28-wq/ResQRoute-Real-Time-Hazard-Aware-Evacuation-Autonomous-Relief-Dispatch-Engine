@@ -1,0 +1,170 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ResQRoute — Citizen Evacuation Navigator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="/shared/css/styles.css">
+</head>
+<body class="bg-[#0b0f19] text-gray-100 h-screen flex flex-col overflow-hidden select-none">
+
+  <!-- Mobile Top Bar -->
+  <header class="bg-[#111827]/90 border-b border-gray-800 px-4 py-3 flex items-center justify-between z-20">
+    <div class="flex items-center space-x-2">
+      <a href="/" class="text-gray-400 hover:text-white mr-1 transition-colors">
+        <i class="fa-solid fa-arrow-left"></i>
+      </a>
+      <div class="w-8 h-8 rounded-lg bg-sky-500/20 border border-sky-500/40 text-sky-400 flex items-center justify-center text-sm font-bold">
+        <i class="fa-solid fa-person-running"></i>
+      </div>
+      <div>
+        <h1 class="font-bold text-sm text-white leading-tight">Evacuation Navigator</h1>
+        <p class="text-[10px] text-gray-400">Citizen Emergency PWA</p>
+      </div>
+    </div>
+    
+    <div class="flex items-center space-x-2">
+      <span id="network-offline-badge" class="hidden px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-bold">
+        <i class="fa-solid fa-triangle-exclamation mr-1"></i> OFFLINE CACHED
+      </span>
+      <button onclick="toggleShelterDrawer()" class="px-2.5 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-semibold flex items-center border border-gray-700">
+        <i class="fa-solid fa-campground mr-1 text-emerald-400"></i> Shelters
+      </button>
+    </div>
+  </header>
+
+  <!-- Live Dynamic Threat Alert Banner (Hidden by default) -->
+  <div id="route-alert-banner" class="hidden bg-red-950/90 border-b border-red-500/50 px-4 py-2.5 text-xs text-red-200 flex items-center justify-between z-20 backdrop-blur-md animate-bounce">
+    <div class="flex items-center space-x-2">
+      <i class="fa-solid fa-circle-radiation text-red-400 text-sm"></i>
+      <span id="route-alert-text font-medium">Path blocked by flood water! Calculating safe detour...</span>
+    </div>
+    <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-red-900 border border-red-400/30">REROUTING</span>
+  </div>
+
+  <!-- Main Map Viewport -->
+  <div class="relative flex-1 w-full h-full">
+    <div id="citizen-map" class="w-full h-full z-10"></div>
+
+    <!-- Floating Navigation HUD -->
+    <div id="nav-hud" class="hidden absolute top-4 left-4 right-4 z-20 glass-panel p-4 rounded-2xl border border-sky-500/30 shadow-2xl">
+      <div class="flex items-start justify-between">
+        <div>
+          <div class="text-[11px] text-sky-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-sky-400 animate-ping"></span> Safe Evacuation Corridor Active
+          </div>
+          <div id="hud-dest-name" class="text-base font-extrabold text-white mt-0.5">Heading to Safe Shelter</div>
+          <div id="hud-dest-info" class="text-xs text-gray-300 mt-1 flex items-center gap-3">
+            <span><i class="fa-solid fa-route text-sky-400 mr-1"></i> <b id="hud-dist">0.0</b> km</span>
+            <span><i class="fa-regular fa-clock text-emerald-400 mr-1"></i> <b id="hud-eta">0</b> min</span>
+            <span><i class="fa-solid fa-shield-heart text-amber-400 mr-1"></i> <b id="hud-hazards-avoided">0</b> hazards bypassed</span>
+          </div>
+        </div>
+        <button onclick="clearRoute()" class="text-gray-400 hover:text-white p-1">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Location Notice Overlay -->
+    <div class="absolute top-4 left-4 z-10 pointer-events-none">
+      <div class="px-3 py-1.5 rounded-lg bg-gray-900/90 border border-gray-700/80 text-[11px] text-gray-300 backdrop-blur shadow-md flex items-center gap-1.5">
+        <i class="fa-solid fa-location-crosshairs text-sky-400"></i>
+        <span>Drag your blue marker to test routes from any location</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Action Deck -->
+  <footer class="bg-[#111827]/95 border-t border-gray-800 p-4 z-20 backdrop-blur-md">
+    <div class="max-w-md mx-auto grid grid-cols-2 gap-3">
+      <button onclick="findSafeRoute()" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-sky-500/20 active:scale-95 transition-all">
+        <i class="fa-solid fa-compass text-base"></i>
+        <span>Find Safe Shelter</span>
+      </button>
+
+      <button onclick="openSosModal()" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-red-500/30 sos-pulse active:scale-95 transition-all">
+        <i class="fa-solid fa-tower-broadcast text-base"></i>
+        <span>SOS Beacon</span>
+      </button>
+    </div>
+  </footer>
+
+  <!-- Emergency SOS Modal -->
+  <div id="sos-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="bg-[#111827] border border-red-500/40 rounded-3xl max-w-sm w-full p-6 shadow-2xl relative">
+      <button onclick="closeSosModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white p-1">
+        <i class="fa-solid fa-xmark text-xl"></i>
+      </button>
+
+      <div class="text-center mb-5">
+        <div class="w-14 h-14 rounded-2xl bg-red-500/20 text-red-400 border border-red-500/30 mx-auto flex items-center justify-center text-2xl mb-2">
+          <i class="fa-solid fa-tower-broadcast"></i>
+        </div>
+        <h3 class="text-xl font-black text-white">Emergency Distress SOS</h3>
+        <p class="text-xs text-gray-400 mt-1">Transmits your exact GPS coordinates directly to first responder dispatch.</p>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <div>
+          <label class="block text-gray-400 font-semibold mb-1">Casualty / Stranded Count</label>
+          <div class="flex items-center gap-3">
+            <button onclick="adjustCounter('sos-casualties', -1)" class="w-10 h-10 rounded-lg bg-gray-800 text-gray-200 text-lg font-bold hover:bg-gray-700">-</button>
+            <span id="sos-casualties" class="flex-1 text-center font-bold text-lg text-white">2</span>
+            <button onclick="adjustCounter('sos-casualties', 1)" class="w-10 h-10 rounded-lg bg-gray-800 text-gray-200 text-lg font-bold hover:bg-gray-700">+</button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-gray-400 font-semibold mb-1">Infants or Elderly Present</label>
+          <div class="flex items-center gap-3">
+            <button onclick="adjustCounter('sos-vulnerable', -1)" class="w-10 h-10 rounded-lg bg-gray-800 text-gray-200 text-lg font-bold hover:bg-gray-700">-</button>
+            <span id="sos-vulnerable" class="flex-1 text-center font-bold text-lg text-white">1</span>
+            <button onclick="adjustCounter('sos-vulnerable', 1)" class="w-10 h-10 rounded-lg bg-gray-800 text-gray-200 text-lg font-bold hover:bg-gray-700">+</button>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between p-3 rounded-xl bg-gray-900 border border-gray-800">
+          <div>
+            <div class="font-bold text-gray-200">Immediate Medical Attention?</div>
+            <div class="text-[10px] text-gray-500">Critical injury, bleeding, oxygen dependency</div>
+          </div>
+          <input type="checkbox" id="sos-medical" class="w-5 h-5 accent-red-500 rounded cursor-pointer">
+        </div>
+
+        <div>
+          <label class="block text-gray-400 font-semibold mb-1">Additional Details (Optional)</label>
+          <input type="text" id="sos-details" placeholder="e.g. Ground floor flooded, trapped on roof" class="w-full px-3 py-2 rounded-xl bg-gray-900 border border-gray-800 text-white placeholder-gray-600 focus:outline-none focus:border-red-500">
+        </div>
+      </div>
+
+      <button onclick="submitEmergencySos()" class="mt-6 w-full py-3.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold text-sm shadow-lg shadow-red-500/30 active:scale-95 transition-all">
+        Transmit Distress Beacon Now
+      </button>
+    </div>
+  </div>
+
+  <!-- Offline Shelters Drawer -->
+  <div id="shelter-drawer" class="hidden fixed inset-x-0 bottom-0 max-w-lg mx-auto bg-[#111827] border-t border-gray-700 rounded-t-3xl z-40 p-5 shadow-2xl max-h-[70vh] flex flex-col">
+    <div class="flex items-center justify-between pb-3 border-b border-gray-800">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-campground text-emerald-400 text-lg"></i>
+        <h3 class="font-bold text-white text-base">Emergency Shelters</h3>
+      </div>
+      <button onclick="toggleShelterDrawer()" class="text-gray-400 hover:text-white p-1">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+    </div>
+    <div id="shelter-list" class="space-y-3 overflow-y-auto mt-4 pr-1">
+      <!-- Dynamically populated -->
+    </div>
+  </div>
+
+  <script src="/shared/js/socket.js"></script>
+  <script src="/citizen-static/app.js"></script>
+</body>
+</html>

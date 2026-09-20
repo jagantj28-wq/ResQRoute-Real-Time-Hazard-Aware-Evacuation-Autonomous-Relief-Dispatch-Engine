@@ -1,0 +1,149 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ResQRoute — Autonomous Disaster Evacuation & Dispatch Engine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/shared/css/styles.css">
+</head>
+<body class="bg-[#0b0f19] text-gray-100 min-h-screen flex flex-col justify-between selection:bg-sky-500 selection:text-white">
+
+  <!-- Top Navigation Bar -->
+  <header class="border-b border-gray-800 bg-[#111827]/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-sky-500/20">
+          <i class="fa-solid fa-shield-halved text-white text-lg"></i>
+        </div>
+        <div>
+          <span class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-sky-400 to-indigo-400 bg-clip-text text-transparent">ResQRoute</span>
+          <span class="text-xs px-2 py-0.5 ml-2 bg-sky-950/80 border border-sky-600/40 text-sky-300 rounded-full font-mono uppercase font-semibold">v1.0.0</span>
+        </div>
+      </div>
+      <div id="connection-status-badge" class="flex items-center px-3 py-1.5 rounded-full bg-gray-900 border border-gray-800 shadow-inner">
+        <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 mr-2 animate-pulse"></span>
+        <span class="text-emerald-400 text-xs font-semibold">SYSTEM READY</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero & Overview -->
+  <main class="max-w-7xl mx-auto px-6 py-12 flex-1 flex flex-col justify-center">
+    <div class="text-center max-w-3xl mx-auto mb-12">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-900/30 border border-sky-500/30 text-sky-400 text-xs font-medium mb-4">
+        <i class="fa-solid fa-bolt text-xs"></i> Next-Gen Disaster Management & Tactical Dispatch
+      </div>
+      <h1 class="text-4xl sm:text-6xl font-black tracking-tight text-white mb-6">
+        Real-Time Hazard-Aware <br>
+        <span class="bg-gradient-to-r from-sky-400 via-teal-300 to-indigo-400 bg-clip-text text-transparent">Evacuation & Dispatch Engine</span>
+      </h1>
+      <p class="text-lg text-gray-400 leading-relaxed">
+        ResQRoute combines dynamic risk-weighted graph routing (<span class="text-sky-300 font-mono">A* with hazard penalties</span>) with automated emergency SOS triage and autonomous fleet dispatch to save lives during critical disasters.
+      </p>
+    </div>
+
+    <!-- Live Telemetry Stats Grid -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto w-full mb-12">
+      <div class="glass-panel p-5 rounded-2xl border border-gray-800 text-center">
+        <div class="text-gray-400 text-xs uppercase tracking-wider font-semibold mb-1">Graph Nodes</div>
+        <div id="stat-nodes" class="text-3xl font-black text-sky-400">12</div>
+        <div class="text-[11px] text-gray-500 mt-1">Road Intersections</div>
+      </div>
+      <div class="glass-panel p-5 rounded-2xl border border-gray-800 text-center">
+        <div class="text-gray-400 text-xs uppercase tracking-wider font-semibold mb-1">Active Shelters</div>
+        <div id="stat-shelters" class="text-3xl font-black text-emerald-400">4</div>
+        <div class="text-[11px] text-gray-500 mt-1">High-Ground Fortress</div>
+      </div>
+      <div class="glass-panel p-5 rounded-2xl border border-gray-800 text-center">
+        <div class="text-gray-400 text-xs uppercase tracking-wider font-semibold mb-1">Rescue Fleet</div>
+        <div id="stat-units" class="text-3xl font-black text-amber-400">6</div>
+        <div class="text-[11px] text-gray-500 mt-1">Ambulances & Boats</div>
+      </div>
+      <div class="glass-panel p-5 rounded-2xl border border-gray-800 text-center">
+        <div class="text-gray-400 text-xs uppercase tracking-wider font-semibold mb-1">Hazard Zones</div>
+        <div id="stat-hazards" class="text-3xl font-black text-rose-400">0</div>
+        <div class="text-[11px] text-gray-500 mt-1">Monitored Polygons</div>
+      </div>
+    </div>
+
+    <!-- Dual Interface Cards -->
+    <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto w-full">
+      
+      <!-- Citizen Portal Card -->
+      <a href="/citizen" class="group relative block p-8 rounded-3xl glass-panel border border-gray-800 hover:border-sky-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-sky-500/10 transform hover:-translate-y-1">
+        <div class="w-14 h-14 rounded-2xl bg-sky-500/10 border border-sky-500/20 text-sky-400 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:bg-sky-500 group-hover:text-white transition-all duration-300 shadow-md">
+          <i class="fa-solid fa-person-walking-arrow-right"></i>
+        </div>
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-2xl font-bold text-white group-hover:text-sky-400 transition-colors">Citizen Evacuation Navigator</h2>
+          <i class="fa-solid fa-arrow-right text-gray-500 group-hover:text-sky-400 group-hover:translate-x-1 transition-all"></i>
+        </div>
+        <p class="text-sm text-gray-400 mb-6 leading-relaxed">
+          Mobile-first evacuation app for citizens. Calculates hazard-free paths to the nearest shelter, offers instant dynamic rerouting when floods surge, and features a one-tap emergency SOS beacon.
+        </p>
+        <div class="flex flex-wrap gap-2 text-xs">
+          <span class="px-2.5 py-1 rounded-md bg-gray-800/80 text-gray-300 font-mono">Offline-Ready PWA</span>
+          <span class="px-2.5 py-1 rounded-md bg-gray-800/80 text-gray-300 font-mono">Dynamic Re-routing</span>
+          <span class="px-2.5 py-1 rounded-md bg-gray-800/80 text-gray-300 font-mono">One-Tap SOS</span>
+        </div>
+      </a>
+
+      <!-- First Responder / Command Center Card -->
+      <a href="/dispatcher" class="group relative block p-8 rounded-3xl glass-panel border border-gray-800 hover:border-indigo-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-500/10 transform hover:-translate-y-1">
+        <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:bg-indigo-500 group-hover:text-white transition-all duration-300 shadow-md">
+          <i class="fa-solid fa-tower-broadcast"></i>
+        </div>
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-2xl font-bold text-white group-hover:text-indigo-400 transition-colors">Incident Commander Center</h2>
+          <i class="fa-solid fa-arrow-right text-gray-500 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all"></i>
+        </div>
+        <p class="text-sm text-gray-400 mb-6 leading-relaxed">
+          Tactical operations console for emergency authorities. Displays live GIS maps, automated triage queues, fleet telemetry, hazard polygon drawing tools, and a built-in Disaster Simulation Deck.
+        </p>
+        <div class="flex flex-wrap gap-2 text-xs">
+          <span class="px-2.5 py-1 rounded-md bg-gray-800/80 text-gray-300 font-mono">Autonomous Dispatch</span>
+          <span class="px-2.5 py-1 rounded-md bg-gray-800/80 text-gray-300 font-mono">Triage Scoring</span>
+          <span class="px-2.5 py-1 rounded-md bg-gray-800/80 text-gray-300 font-mono">Live Simulation</span>
+        </div>
+      </a>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-gray-800/80 bg-[#111827]/40 py-6 text-center text-xs text-gray-500">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-2">
+        <span>ResQRoute Disaster Management Engine</span>
+        <span>•</span>
+        <span class="text-gray-400">Autonomous GIS Evacuation & Dispatch</span>
+      </div>
+      <div class="flex items-center space-x-4">
+        <a href="https://github.com/jagantj28-wq/ResQRoute-Real-Time-Hazard-Aware-Evacuation-Autonomous-Relief-Dispatch-Engine" target="_blank" class="hover:text-sky-400 transition-colors">
+          <i class="fa-brands fa-github text-sm mr-1"></i> GitHub Repository
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/shared/js/socket.js"></script>
+  <script>
+    async function loadStats() {
+      try {
+        const res = await fetch("/api/health");
+        const data = await res.json();
+        document.getElementById("stat-nodes").textContent = data.nodes_loaded || 12;
+        document.getElementById("stat-shelters").textContent = data.shelters_count || 4;
+        document.getElementById("stat-units").textContent = data.units_available || 6;
+        document.getElementById("stat-hazards").textContent = data.active_hazards || 0;
+      } catch (e) {
+        console.warn("Could not fetch initial stats:", e);
+      }
+    }
+    loadStats();
+    setInterval(loadStats, 5000);
+  </script>
+</body>
+</html>

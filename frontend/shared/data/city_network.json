@@ -1,0 +1,442 @@
+{
+  "name": "Metro Bay Coastal Basin",
+  "center": [
+    13.0827,
+    80.2707
+  ],
+  "bounds": {
+    "min_lat": 13.04,
+    "max_lat": 13.12,
+    "min_lng": 80.22,
+    "max_lng": 80.31
+  },
+  "nodes": [
+    {
+      "id": "N1",
+      "name": "North Hill Ridge",
+      "lat": 13.115,
+      "lng": 80.25,
+      "elevation": 28.5,
+      "zone": "North Highlands"
+    },
+    {
+      "id": "N2",
+      "name": "University Tech Park",
+      "lat": 13.105,
+      "lng": 80.265,
+      "elevation": 22.0,
+      "zone": "North Central"
+    },
+    {
+      "id": "N3",
+      "name": "Central Metro Station",
+      "lat": 13.0827,
+      "lng": 80.2707,
+      "elevation": 12.5,
+      "zone": "Downtown"
+    },
+    {
+      "id": "N4",
+      "name": "Grand Boulevard Junction",
+      "lat": 13.08,
+      "lng": 80.25,
+      "elevation": 14.0,
+      "zone": "Midtown"
+    },
+    {
+      "id": "N5",
+      "name": "River Bridge West",
+      "lat": 13.072,
+      "lng": 80.26,
+      "elevation": 7.0,
+      "zone": "River Corridor"
+    },
+    {
+      "id": "N6",
+      "name": "River Bridge East (Causeway)",
+      "lat": 13.0715,
+      "lng": 80.28,
+      "elevation": 4.5,
+      "zone": "River Corridor"
+    },
+    {
+      "id": "N7",
+      "name": "Marina Coastal Highway",
+      "lat": 13.065,
+      "lng": 80.295,
+      "elevation": 3.2,
+      "zone": "Coastal Belt"
+    },
+    {
+      "id": "N8",
+      "name": "Harbor Terminal Point",
+      "lat": 13.085,
+      "lng": 80.298,
+      "elevation": 2.8,
+      "zone": "Coastal Belt"
+    },
+    {
+      "id": "N9",
+      "name": "South Bay Residential Sector",
+      "lat": 13.055,
+      "lng": 80.275,
+      "elevation": 6.0,
+      "zone": "South Basin"
+    },
+    {
+      "id": "N10",
+      "name": "Southern Heights Reserve",
+      "lat": 13.045,
+      "lng": 80.245,
+      "elevation": 32.0,
+      "zone": "South Highlands"
+    },
+    {
+      "id": "N11",
+      "name": "West Bypass Expressway",
+      "lat": 13.09,
+      "lng": 80.23,
+      "elevation": 18.0,
+      "zone": "West Suburbs"
+    },
+    {
+      "id": "N12",
+      "name": "Industrial Logistics Corridor",
+      "lat": 13.06,
+      "lng": 80.235,
+      "elevation": 16.5,
+      "zone": "West Suburbs"
+    }
+  ],
+  "edges": [
+    {
+      "id": "E1",
+      "from": "N1",
+      "to": "N2",
+      "distance_km": 1.9,
+      "speed_limit_kmh": 60,
+      "type": "highway"
+    },
+    {
+      "id": "E2",
+      "from": "N1",
+      "to": "N11",
+      "distance_km": 3.1,
+      "speed_limit_kmh": 80,
+      "type": "expressway"
+    },
+    {
+      "id": "E3",
+      "from": "N2",
+      "to": "N3",
+      "distance_km": 2.5,
+      "speed_limit_kmh": 50,
+      "type": "arterial"
+    },
+    {
+      "id": "E4",
+      "from": "N2",
+      "to": "N8",
+      "distance_km": 3.8,
+      "speed_limit_kmh": 60,
+      "type": "arterial"
+    },
+    {
+      "id": "E5",
+      "from": "N11",
+      "to": "N4",
+      "distance_km": 2.4,
+      "speed_limit_kmh": 70,
+      "type": "arterial"
+    },
+    {
+      "id": "E6",
+      "from": "N4",
+      "to": "N3",
+      "distance_km": 2.2,
+      "speed_limit_kmh": 40,
+      "type": "urban"
+    },
+    {
+      "id": "E7",
+      "from": "N4",
+      "to": "N5",
+      "distance_km": 1.4,
+      "speed_limit_kmh": 50,
+      "type": "arterial"
+    },
+    {
+      "id": "E8",
+      "from": "N3",
+      "to": "N6",
+      "distance_km": 1.6,
+      "speed_limit_kmh": 50,
+      "type": "arterial"
+    },
+    {
+      "id": "E9",
+      "from": "N3",
+      "to": "N8",
+      "distance_km": 3.0,
+      "speed_limit_kmh": 60,
+      "type": "arterial"
+    },
+    {
+      "id": "E10",
+      "from": "N5",
+      "to": "N6",
+      "distance_km": 2.1,
+      "speed_limit_kmh": 45,
+      "type": "bridge_causeway"
+    },
+    {
+      "id": "E11",
+      "from": "N5",
+      "to": "N12",
+      "distance_km": 2.9,
+      "speed_limit_kmh": 60,
+      "type": "arterial"
+    },
+    {
+      "id": "E12",
+      "from": "N6",
+      "to": "N7",
+      "distance_km": 1.8,
+      "speed_limit_kmh": 50,
+      "type": "coastal_road"
+    },
+    {
+      "id": "E13",
+      "from": "N7",
+      "to": "N8",
+      "distance_km": 2.3,
+      "speed_limit_kmh": 55,
+      "type": "coastal_road"
+    },
+    {
+      "id": "E14",
+      "from": "N6",
+      "to": "N9",
+      "distance_km": 1.9,
+      "speed_limit_kmh": 45,
+      "type": "urban"
+    },
+    {
+      "id": "E15",
+      "from": "N9",
+      "to": "N7",
+      "distance_km": 2.4,
+      "speed_limit_kmh": 45,
+      "type": "urban"
+    },
+    {
+      "id": "E16",
+      "from": "N12",
+      "to": "N10",
+      "distance_km": 2.1,
+      "speed_limit_kmh": 65,
+      "type": "arterial"
+    },
+    {
+      "id": "E17",
+      "from": "N11",
+      "to": "N12",
+      "distance_km": 3.4,
+      "speed_limit_kmh": 80,
+      "type": "expressway"
+    },
+    {
+      "id": "E18",
+      "from": "N9",
+      "to": "N10",
+      "distance_km": 3.3,
+      "speed_limit_kmh": 50,
+      "type": "arterial"
+    }
+  ],
+  "shelters": [
+    {
+      "id": "S1",
+      "name": "North Hill Emergency Fortress",
+      "node_id": "N1",
+      "lat": 13.115,
+      "lng": 80.25,
+      "elevation": 28.5,
+      "capacity": 800,
+      "current_occupancy": 120,
+      "resources": {
+        "water_liters": 15000,
+        "meals": 3500,
+        "medical_kits": 400,
+        "generators": 6
+      },
+      "status": "OPERATIONAL"
+    },
+    {
+      "id": "S2",
+      "name": "Southern Heights Safe Dome",
+      "node_id": "N10",
+      "lat": 13.045,
+      "lng": 80.245,
+      "elevation": 32.0,
+      "capacity": 1200,
+      "current_occupancy": 310,
+      "resources": {
+        "water_liters": 25000,
+        "meals": 6000,
+        "medical_kits": 750,
+        "generators": 10
+      },
+      "status": "OPERATIONAL"
+    },
+    {
+      "id": "S3",
+      "name": "West Ridge High School Shelter",
+      "node_id": "N11",
+      "lat": 13.09,
+      "lng": 80.23,
+      "elevation": 18.0,
+      "capacity": 600,
+      "current_occupancy": 520,
+      "resources": {
+        "water_liters": 4000,
+        "meals": 900,
+        "medical_kits": 120,
+        "generators": 2
+      },
+      "status": "NEAR_CAPACITY"
+    },
+    {
+      "id": "S4",
+      "name": "Marina Coastal Pavilion (Evacuated)",
+      "node_id": "N7",
+      "lat": 13.065,
+      "lng": 80.295,
+      "elevation": 3.2,
+      "capacity": 450,
+      "current_occupancy": 0,
+      "resources": {
+        "water_liters": 0,
+        "meals": 0,
+        "medical_kits": 0,
+        "generators": 0
+      },
+      "status": "CLOSED_RISK_ZONE"
+    }
+  ],
+  "hospitals": [
+    {
+      "id": "H1",
+      "name": "North Central Trauma Center",
+      "node_id": "N2",
+      "lat": 13.105,
+      "lng": 80.265,
+      "icu_beds_free": 18,
+      "trauma_ready": true
+    },
+    {
+      "id": "H2",
+      "name": "Downtown General Hospital",
+      "node_id": "N3",
+      "lat": 13.0827,
+      "lng": 80.2707,
+      "icu_beds_free": 4,
+      "trauma_ready": true
+    }
+  ],
+  "rescue_depots": [
+    {
+      "id": "D1",
+      "name": "Highland Rapid Deployment Base",
+      "node_id": "N1",
+      "lat": 13.115,
+      "lng": 80.25,
+      "units": [
+        {
+          "id": "U1",
+          "name": "Rapid Response Ambulance Alpha",
+          "type": "AMBULANCE",
+          "speed_kmh": 65,
+          "capacity": 2,
+          "status": "AVAILABLE",
+          "lat": 13.115,
+          "lng": 80.25,
+          "current_node": "N1"
+        },
+        {
+          "id": "U2",
+          "name": "Tactical Rescue Truck Sierra",
+          "type": "HEAVY_RESCUE",
+          "speed_kmh": 50,
+          "capacity": 8,
+          "status": "AVAILABLE",
+          "lat": 13.115,
+          "lng": 80.25,
+          "current_node": "N1"
+        }
+      ]
+    },
+    {
+      "id": "D2",
+      "name": "West Logistics Depot",
+      "node_id": "N11",
+      "lat": 13.09,
+      "lng": 80.23,
+      "units": [
+        {
+          "id": "U3",
+          "name": "Ambulance Bravo",
+          "type": "AMBULANCE",
+          "speed_kmh": 65,
+          "capacity": 2,
+          "status": "AVAILABLE",
+          "lat": 13.09,
+          "lng": 80.23,
+          "current_node": "N11"
+        },
+        {
+          "id": "U4",
+          "name": "Zodiac Amphibious Rescue Boat",
+          "type": "RESCUE_BOAT",
+          "speed_kmh": 40,
+          "capacity": 6,
+          "status": "AVAILABLE",
+          "lat": 13.09,
+          "lng": 80.23,
+          "current_node": "N11"
+        }
+      ]
+    },
+    {
+      "id": "D3",
+      "name": "South Command Depot",
+      "node_id": "N10",
+      "lat": 13.045,
+      "lng": 80.245,
+      "units": [
+        {
+          "id": "U5",
+          "name": "Emergency Medical Unit Charlie",
+          "type": "AMBULANCE",
+          "speed_kmh": 65,
+          "capacity": 3,
+          "status": "AVAILABLE",
+          "lat": 13.045,
+          "lng": 80.245,
+          "current_node": "N10"
+        },
+        {
+          "id": "U6",
+          "name": "High-Clearance Evacuation Carrier",
+          "type": "HEAVY_RESCUE",
+          "speed_kmh": 45,
+          "capacity": 15,
+          "status": "AVAILABLE",
+          "lat": 13.045,
+          "lng": 80.245,
+          "current_node": "N10"
+        }
+      ]
+    }
+  ]
+}

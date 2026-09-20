@@ -1,0 +1,248 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ResQRoute — Incident Commander Tactical Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="/shared/css/styles.css">
+</head>
+<body class="bg-[#0b0f19] text-gray-100 h-screen flex flex-col overflow-hidden select-none">
+
+  <!-- Top Tactical Command Bar -->
+  <header class="bg-[#111827] border-b border-gray-800 px-6 py-3 flex items-center justify-between z-30 shrink-0">
+    <div class="flex items-center space-x-3">
+      <a href="/" class="text-gray-400 hover:text-white mr-1 transition-colors">
+        <i class="fa-solid fa-arrow-left"></i>
+      </a>
+      <div class="w-9 h-9 rounded-xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-400 flex items-center justify-center text-lg font-bold shadow-md shadow-indigo-500/10">
+        <i class="fa-solid fa-tower-broadcast"></i>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="font-extrabold text-base text-white">ResQRoute Incident Commander</span>
+          <span class="px-2 py-0.5 rounded bg-indigo-950/80 border border-indigo-500/40 text-indigo-300 text-[10px] font-mono font-bold">TACTICAL DISPATCH</span>
+        </div>
+        <p class="text-[11px] text-gray-400">Autonomous Geospatial Relief & Risk Routing Center</p>
+      </div>
+    </div>
+
+    <!-- Quick Action / Simulation Controls -->
+    <div class="flex items-center space-x-3">
+      <button onclick="triggerAutonomousDispatch()" class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-sky-500/20 active:scale-95 transition-all">
+        <i class="fa-solid fa-bolt"></i>
+        <span>Run Auto-Dispatch</span>
+      </button>
+
+      <button onclick="openHazardModal()" class="px-3 py-1.5 rounded-xl bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/40 font-semibold text-xs flex items-center gap-1.5 transition-all">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <span>Inject Hazard</span>
+      </button>
+
+      <div id="connection-status-badge" class="flex items-center px-3 py-1.5 rounded-full bg-gray-900 border border-gray-800 text-xs">
+        <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-2 animate-pulse"></span>
+        <span class="text-emerald-400 font-mono font-semibold">LIVE</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main 3-Column Tactical Layout -->
+  <div class="flex-1 flex overflow-hidden">
+
+    <!-- LEFT PANEL: Triage Queue & Fleet Telemetry -->
+    <aside class="w-80 bg-[#111827]/80 border-r border-gray-800 flex flex-col shrink-0 overflow-hidden">
+      
+      <!-- Triage Queue Section -->
+      <div class="p-4 border-b border-gray-800 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-bell-concierge text-rose-400 text-sm"></i>
+          <h2 class="font-bold text-xs uppercase tracking-wider text-white">Live Triage Queue</h2>
+        </div>
+        <span id="sos-count-badge" class="px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[10px] font-mono font-bold">0 Pending</span>
+      </div>
+
+      <div id="triage-queue-list" class="flex-1 overflow-y-auto p-3 space-y-2.5">
+        <!-- Triage SOS Cards populated dynamically -->
+        <div class="text-center py-8 text-gray-500 text-xs">
+          <i class="fa-solid fa-shield-check text-2xl text-gray-600 mb-2"></i>
+          <p>No unassigned SOS distress signals.</p>
+        </div>
+      </div>
+
+      <!-- Fleet Telemetry Section -->
+      <div class="p-3 border-t border-b border-gray-800 flex items-center justify-between bg-gray-900/40 shrink-0">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-truck-medical text-sky-400 text-sm"></i>
+          <h2 class="font-bold text-xs uppercase tracking-wider text-white">Rescue Fleet</h2>
+        </div>
+        <button onclick="resetFleet()" class="text-[10px] text-gray-400 hover:text-white flex items-center gap-1">
+          <i class="fa-solid fa-rotate-left"></i> Reset
+        </button>
+      </div>
+
+      <div id="fleet-list" class="h-48 overflow-y-auto p-3 space-y-2 bg-gray-950/40">
+        <!-- Fleet units populated dynamically -->
+      </div>
+    </aside>
+
+    <!-- CENTER PANEL: Tactical GIS Map -->
+    <main class="flex-1 relative h-full">
+      <div id="dispatcher-map" class="w-full h-full z-10"></div>
+
+      <!-- Map Legend Floating HUD -->
+      <div class="absolute bottom-6 left-6 z-20 glass-panel px-4 py-3 rounded-2xl border border-gray-700/60 shadow-xl text-[11px] space-y-1.5 pointer-events-none">
+        <div class="font-bold text-gray-300 text-xs mb-1">Tactical Map Layers</div>
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded-full bg-rose-500 sos-pulse inline-block"></span>
+          <span>SOS Distress Beacon</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded bg-amber-500/60 border border-amber-400 inline-block"></span>
+          <span>Flood / Hazard Zone</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded bg-emerald-600 border border-emerald-300 inline-block"></span>
+          <span>Operational Shelter</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded-full bg-sky-400 inline-block"></span>
+          <span>Rescue Unit (Ambulance/Boat)</span>
+        </div>
+      </div>
+    </main>
+
+    <!-- RIGHT PANEL: Disaster Simulator Deck & Live Logs -->
+    <aside class="w-84 bg-[#111827]/80 border-l border-gray-800 flex flex-col shrink-0 overflow-hidden">
+      
+      <!-- Simulation Deck Header -->
+      <div class="p-4 border-b border-gray-800 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-gamepad text-indigo-400 text-sm"></i>
+          <h2 class="font-bold text-xs uppercase tracking-wider text-white">Disaster Simulation Deck</h2>
+        </div>
+        <button onclick="resetSimulation()" class="px-2 py-1 rounded bg-gray-800 hover:bg-gray-700 text-gray-300 text-[10px] font-bold">
+          <i class="fa-solid fa-arrows-rotate mr-1"></i> Reset
+        </button>
+      </div>
+
+      <!-- Interactive Scenario Controls -->
+      <div class="p-4 space-y-3 shrink-0 border-b border-gray-800 bg-gray-900/30">
+        <div class="text-[11px] text-gray-400">
+          Click sequential phases to simulate an active disaster scenario for demonstrations:
+        </div>
+
+        <div class="space-y-2 text-xs">
+          <!-- Step 1 -->
+          <button onclick="triggerSimStep(1)" id="sim-btn-1" class="w-full text-left p-2.5 rounded-xl bg-gray-900 hover:bg-gray-800 border border-gray-800 hover:border-amber-500/40 flex items-center justify-between transition-all">
+            <div class="flex items-center gap-2.5">
+              <span class="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center font-bold text-[10px]">1</span>
+              <div>
+                <div class="font-bold text-white">Phase 1: River Basin Surge</div>
+                <div class="text-[10px] text-gray-400">Moderate water rising at River Corridor</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-play text-gray-500 text-xs"></i>
+          </button>
+
+          <!-- Step 2 -->
+          <button onclick="triggerSimStep(2)" id="sim-btn-2" class="w-full text-left p-2.5 rounded-xl bg-gray-900 hover:bg-gray-800 border border-gray-800 hover:border-rose-500/40 flex items-center justify-between transition-all">
+            <div class="flex items-center gap-2.5">
+              <span class="w-5 h-5 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center justify-center font-bold text-[10px]">2</span>
+              <div>
+                <div class="font-bold text-white">Phase 2: Causeway Breach</div>
+                <div class="text-[10px] text-gray-400">Bridge submerged (1.65m), road cut off</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-play text-gray-500 text-xs"></i>
+          </button>
+
+          <!-- Step 3 -->
+          <button onclick="triggerSimStep(3)" id="sim-btn-3" class="w-full text-left p-2.5 rounded-xl bg-gray-900 hover:bg-gray-800 border border-gray-800 hover:border-sky-500/40 flex items-center justify-between transition-all">
+            <div class="flex items-center gap-2.5">
+              <span class="w-5 h-5 rounded-full bg-sky-500/20 text-sky-400 border border-sky-500/30 flex items-center justify-center font-bold text-[10px]">3</span>
+              <div>
+                <div class="font-bold text-white">Phase 3: Stranded Family SOS</div>
+                <div class="text-[10px] text-gray-400">Critical distress call with infants & medic</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-play text-gray-500 text-xs"></i>
+          </button>
+
+          <!-- Step 4 -->
+          <button onclick="triggerSimStep(4)" id="sim-btn-4" class="w-full text-left p-2.5 rounded-xl bg-gray-900 hover:bg-gray-800 border border-gray-800 hover:border-emerald-500/40 flex items-center justify-between transition-all">
+            <div class="flex items-center gap-2.5">
+              <span class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center font-bold text-[10px]">4</span>
+              <div>
+                <div class="font-bold text-white">Phase 4: Autonomous Dispatch</div>
+                <div class="text-[10px] text-gray-400">Reroute via Western Expressway safe bypass</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-play text-gray-500 text-xs"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Real-Time Event Audit Stream -->
+      <div class="p-3 border-b border-gray-800 flex items-center justify-between bg-gray-900/40 shrink-0">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-terminal text-gray-400 text-xs"></i>
+          <h2 class="font-bold text-xs uppercase tracking-wider text-gray-300">Live Mission Logs</h2>
+        </div>
+        <button onclick="clearLogs()" class="text-[10px] text-gray-500 hover:text-gray-300">Clear</button>
+      </div>
+
+      <div id="event-log-container" class="flex-1 overflow-y-auto p-3 font-mono text-[11px] space-y-2 bg-[#0b0f19]">
+        <!-- Dynamic logs appended here -->
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- Manual Hazard Injection Modal -->
+  <div id="hazard-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="bg-[#111827] border border-amber-500/40 rounded-3xl max-w-md w-full p-6 shadow-2xl relative">
+      <button onclick="closeHazardModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white p-1">
+        <i class="fa-solid fa-xmark text-xl"></i>
+      </button>
+
+      <div class="text-center mb-5">
+        <div class="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30 mx-auto flex items-center justify-center text-xl mb-2">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h3 class="text-lg font-black text-white">Inject Hazard Zone</h3>
+        <p class="text-xs text-gray-400 mt-1">Deploy an active threat polygon to test dynamic re-routing.</p>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block text-gray-400 font-semibold mb-1">Preset Disaster Location</label>
+          <select id="hazard-preset" class="w-full px-3 py-2 rounded-xl bg-gray-900 border border-gray-800 text-white focus:outline-none focus:border-amber-500">
+            <option value="river_bridge">River Bridge Causeway (Cuts off Central-South corridor)</option>
+            <option value="grand_boulevard">Grand Boulevard Midtown (Flash flooding)</option>
+            <option value="coastal_highway">Marina Coastal Highway (Storm surge inundation)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-gray-400 font-semibold mb-1">Severity Level</label>
+          <select id="hazard-severity" class="w-full px-3 py-2 rounded-xl bg-gray-900 border border-gray-800 text-white focus:outline-none focus:border-amber-500">
+            <option value="CRITICAL">CRITICAL (Completely Impassable - 1.5m depth)</option>
+            <option value="HIGH">HIGH (Dangerous - Heavy Delay)</option>
+            <option value="MEDIUM">MEDIUM (Moderate Pool - Advisory)</option>
+          </select>
+        </div>
+      </div>
+
+      <button onclick="submitHazardInjection()" class="mt-6 w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-bold text-sm shadow-lg shadow-amber-500/30 active:scale-95 transition-all">
+        Deploy Hazard to Network
+      </button>
+    </div>
+  </div>
+
+  <script src="/shared/js/socket.js"></script>
+  <script src="/dispatcher-static/app.js"></script>
+</body>
+</html>
